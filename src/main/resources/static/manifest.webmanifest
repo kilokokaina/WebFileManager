@@ -1,0 +1,16 @@
+{
+  "background_color": "LightYellow",
+  "description": "Web-application for desktop file system",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "images/apple_icon_hd.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "name": "Web File Manager",
+  "short_name": "WFM",
+  "start_url": "/path",
+  "theme_color": "#f8f9fa"
+}
