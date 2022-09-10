@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -36,11 +38,11 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String hello() {
-        return "redirect:/path";
+    public RedirectView hello() {
+        return new RedirectView("path");
     }
 
-    @GetMapping("/path")
+    @GetMapping("path")
     public String directoryList(@RequestParam(defaultValue = DEFAULT_PATH) String filePath,
                                               Model model) {
         if (!filePath.contains(DEFAULT_PATH)) return "redirect:/";
@@ -69,7 +71,7 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/download")
+    @GetMapping("download")
     public @ResponseBody ResponseEntity<InputStreamResource> downloadFile(
             @RequestParam String filePath) throws IOException {
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(servletContext, filePath);
@@ -84,8 +86,9 @@ public class MainController {
                 .body(resource);
     }
 
-    @GetMapping("/makezip")
-    public String makeZip(@RequestParam String filePath) throws IOException{
+    @GetMapping("makezip")
+    public RedirectView makeZip(@RequestParam String filePath,
+                                RedirectAttributes redirectAttributes) throws IOException{
         File file = new File(filePath);
 
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(
@@ -93,8 +96,9 @@ public class MainController {
             ZipService.zipFolder(file, file.getName(), zipOutputStream);
         }
 
-        return String.format("redirect:/path?filePath=%s",
-                file.getParent());
+        redirectAttributes.addAttribute("filePath", file.getParent());
+
+        return new RedirectView("path");
     }
 
     private boolean isHiddenFolder(String fileName) {
